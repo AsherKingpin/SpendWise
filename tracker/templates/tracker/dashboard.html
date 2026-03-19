@@ -4,360 +4,549 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise — Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap');
+
         :root {
-            --blue-900: #0a1628;
-            --blue-600: #1d4ed8;
-            --blue-500: #2563eb;
-            --blue-400: #3b82f6;
+            --ink:       #0c0e1a;
+            --ink-soft:  #3d4166;
+            --ink-muted: #8b8fa8;
+            --surface:   #f5f6ff;
+            --card:      #ffffff;
+            --border:    #e8eaf5;
+            --accent:    #4f46e5;
+            --accent-2:  #7c3aed;
+            --accent-g:  linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --green:     #10b981;
+            --amber:     #f59e0b;
+            --red:       #ef4444;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 9px;
+            --shadow-sm: 0 1px 4px rgba(12,14,26,.06), 0 4px 16px rgba(12,14,26,.06);
+            --shadow-md: 0 2px 8px rgba(12,14,26,.07), 0 8px 32px rgba(12,14,26,.09);
         }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'DM Sans', sans-serif;
-            background-color: #f0f4ff;
+            background: var(--surface);
+            color: var(--ink);
+            min-height: 100vh;
         }
 
-        /* Topbar */
-        .topbar {
-            background: var(--blue-900);
-            height: 60px;
-            position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0,0,0,.3);
+        /* ── Noise texture overlay ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 200px;
+            opacity: .4;
         }
-        .brand-icon {
-            width: 34px; height: 34px;
-            background: var(--blue-500);
-            border-radius: 9px;
+
+        /* ── Topbar ── */
+        .topbar {
+            background: var(--ink);
+            height: 64px;
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; align-items: center;
+            padding: 0 28px;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255,255,255,.05);
+        }
+        .topbar::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(79,70,229,.5), transparent);
+        }
+
+        .brand {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; margin-right: auto;
+        }
+        .brand-mark {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: var(--accent-g);
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
+            font-size: 17px;
+            box-shadow: 0 4px 14px rgba(79,70,229,.45);
         }
         .brand-name {
             font-family: 'Sora', sans-serif;
-            font-weight: 700; font-size: 18px;
-            color: #fff; letter-spacing: -.3px;
+            font-weight: 800; font-size: 17px;
+            color: #fff; letter-spacing: -.4px;
         }
-        .user-chip {
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 20px;
-            padding: 4px 14px 4px 4px;
-            display: flex; align-items: center; gap: 8px;
+        .brand-name span { color: #a5b4fc; }
+
+        .nav-pill {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 30px;
+            padding: 5px 5px 5px 5px;
+            display: flex; align-items: center; gap: 6px;
         }
-        .user-avatar {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: var(--blue-500);
+        .nav-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--accent-g);
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 700; color: #fff;
             font-family: 'Sora', sans-serif;
         }
-        .user-name { font-size: 13px; color: rgba(255,255,255,.85); }
-        .btn-logout {
-            background: rgba(239,68,68,.15);
-            border: 1px solid rgba(239,68,68,.3);
-            color: #fca5a5 !important;
-            border-radius: 20px;
-            font-size: 13px; padding: 6px 16px;
-            transition: background .2s;
-            text-decoration: none;
+        .nav-username {
+            font-size: 13px; color: rgba(255,255,255,.8);
+            padding-right: 10px;
+            font-weight: 500;
         }
-        .btn-logout:hover { background: rgba(239,68,68,.28); }
 
-        /* Page title */
+        .btn-logout {
+            display: flex; align-items: center; gap: 7px;
+            background: rgba(239,68,68,.12);
+            border: 1px solid rgba(239,68,68,.25);
+            color: #fca5a5;
+            border-radius: 24px;
+            font-size: 13px; padding: 7px 16px;
+            text-decoration: none; font-weight: 500;
+            transition: background .2s, border-color .2s;
+        }
+        .btn-logout:hover {
+            background: rgba(239,68,68,.22);
+            border-color: rgba(239,68,68,.4);
+            color: #fca5a5;
+        }
+
+        /* ── Page shell ── */
+        .page-shell {
+            position: relative; z-index: 1;
+            max-width: 1280px; margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        /* ── Page header ── */
+        .page-head {
+            display: flex; flex-wrap: wrap;
+            align-items: center; justify-content: space-between;
+            gap: 16px; margin-bottom: 32px;
+        }
         .page-title {
             font-family: 'Sora', sans-serif;
-            font-size: 24px; font-weight: 700;
-            color: var(--blue-900); letter-spacing: -.3px;
+            font-size: 26px; font-weight: 800;
+            color: var(--ink); letter-spacing: -.5px;
+            line-height: 1.2;
+        }
+        .page-subtitle {
+            font-size: 13px; color: var(--ink-muted);
+            margin-top: 3px; font-weight: 400;
         }
 
-        /* Stat cards */
+        .btn-add {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--accent-g);
+            border: none; border-radius: var(--radius-md);
+            color: #fff; font-family: 'Sora', sans-serif;
+            font-weight: 700; font-size: 14px;
+            padding: 11px 22px;
+            box-shadow: 0 4px 20px rgba(79,70,229,.4);
+            text-decoration: none;
+            transition: transform .15s, box-shadow .15s;
+            cursor: pointer;
+        }
+        .btn-add:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(79,70,229,.5);
+        }
+        .btn-add i { font-size: 16px; }
+
+        /* ── Stat cards ── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        @media (max-width: 768px) { .stat-grid { grid-template-columns: 1fr; } }
+        @media (min-width: 500px) and (max-width: 768px) { .stat-grid { grid-template-columns: repeat(3, 1fr); } }
+
         .stat-card {
-            border: none; border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
             position: relative; overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
         }
         .stat-card::before {
-            content: ''; position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
         }
-        .stat-card.c-blue::before  { background: linear-gradient(90deg, #1d4ed8, #3b82f6); }
-        .stat-card.c-green::before { background: linear-gradient(90deg, #16a34a, #22c55e); }
-        .stat-card.c-amber::before { background: linear-gradient(90deg, #d97706, #f59e0b); }
+        .stat-card.blue::before  { background: linear-gradient(90deg, #4f46e5, #818cf8); }
+        .stat-card.green::before { background: linear-gradient(90deg, #059669, #10b981); }
+        .stat-card.amber::before { background: linear-gradient(90deg, #d97706, #f59e0b); }
 
-        .stat-icon {
-            width: 42px; height: 42px; border-radius: 11px;
+        /* subtle glow blob in corner */
+        .stat-card::after {
+            content: '';
+            position: absolute; bottom: -30px; right: -30px;
+            width: 100px; height: 100px; border-radius: 50%;
+            opacity: .06; pointer-events: none;
+        }
+        .stat-card.blue::after  { background: #4f46e5; }
+        .stat-card.green::after { background: #10b981; }
+        .stat-card.amber::after { background: #f59e0b; }
+
+        .stat-header {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .stat-label {
+            font-size: 11px; font-weight: 600; letter-spacing: .6px;
+            text-transform: uppercase; color: var(--ink-muted);
+        }
+        .stat-emoji-wrap {
+            width: 40px; height: 40px; border-radius: 11px;
             display: flex; align-items: center; justify-content: center;
             font-size: 18px;
         }
+        .blue  .stat-emoji-wrap { background: rgba(79,70,229,.08); }
+        .green .stat-emoji-wrap { background: rgba(16,185,129,.08); }
+        .amber .stat-emoji-wrap { background: rgba(245,158,11,.08); }
+
         .stat-value {
             font-family: 'Sora', sans-serif;
-            font-size: 28px; font-weight: 700;
-            color: var(--blue-900); letter-spacing: -.5px;
+            font-size: 30px; font-weight: 800;
+            color: var(--ink); letter-spacing: -.8px;
+            line-height: 1;
+        }
+        .stat-meta {
+            font-size: 12px; color: var(--ink-muted);
+            margin-top: 6px;
         }
 
-        /* Add button */
-        .btn-add {
-            background: linear-gradient(135deg, var(--blue-600), var(--blue-400)) !important;
-            border: none !important;
-            border-radius: 12px !important;
-            font-family: 'Sora', sans-serif;
-            font-weight: 600; font-size: 14px;
-            padding: 10px 22px;
-            box-shadow: 0 4px 16px rgba(37,99,235,.35);
-            transition: transform .15s, box-shadow .15s;
+        /* ── Content grid ── */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 24px;
+            align-items: start;
         }
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(37,99,235,.45);
-        }
+        @media (max-width: 1024px) { .content-grid { grid-template-columns: 1fr; } }
 
-        /* Content cards */
-        .content-card {
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 16px !important;
-            box-shadow: 0 2px 12px rgba(0,0,0,.04);
+        /* ── Shared card shell ── */
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
         }
-        .content-card .card-header {
+        .panel-head {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center;
+            justify-content: space-between;
             background: #fff;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 16px 20px;
         }
-        .card-title-text {
+        .panel-title {
             font-family: 'Sora', sans-serif;
-            font-size: 15px; font-weight: 700; color: var(--blue-900);
+            font-size: 14px; font-weight: 700;
+            color: var(--ink);
         }
-        .badge-count {
+        .panel-badge {
             font-size: 11px; font-weight: 500;
-            background: #f0f4ff; color: #64748b;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px; padding: 3px 10px;
+            background: var(--surface); color: var(--ink-muted);
+            border: 1px solid var(--border);
+            border-radius: 20px; padding: 3px 11px;
         }
 
-        /* Expense rows */
+        /* ── Expense rows ── */
         .expense-row {
             display: flex; align-items: center; gap: 14px;
-            padding: 13px 20px;
-            border-bottom: 1px solid #f8fafc;
+            padding: 14px 22px;
+            border-bottom: 1px solid #f5f6ff;
             transition: background .15s;
         }
         .expense-row:last-child { border-bottom: none; }
-        .expense-row:hover { background: #f8faff; }
-        .expense-icon {
-            width: 38px; height: 38px; border-radius: 10px;
-            background: #eff6ff;
+        .expense-row:hover { background: #fafbff; }
+
+        .expense-icon-wrap {
+            width: 40px; height: 40px; border-radius: 11px;
+            background: #eff0ff;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px; flex-shrink: 0;
+            font-size: 17px; flex-shrink: 0;
         }
-        .expense-category { font-size: 14px; font-weight: 500; color: var(--blue-900); }
-        .expense-date { font-size: 12px; color: #94a3b8; }
+        .expense-info { flex: 1; min-width: 0; }
+        .expense-cat {
+            font-size: 14px; font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .expense-date { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+
+        .expense-right {
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+        }
         .expense-amount {
             font-family: 'Sora', sans-serif;
-            font-size: 15px; font-weight: 700; color: #ef4444;
-            margin-left: auto; flex-shrink: 0;
+            font-size: 15px; font-weight: 700;
+            color: var(--red);
+        }
+        .btn-icon {
+            width: 30px; height: 30px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; text-decoration: none;
+            transition: background .15s, color .15s;
+            border: 1px solid transparent;
+        }
+        .btn-edit {
+            color: var(--accent);
+            background: rgba(79,70,229,.07);
+            border-color: rgba(79,70,229,.15);
+        }
+        .btn-edit:hover {
+            background: rgba(79,70,229,.14);
+            color: var(--accent);
+        }
+        .btn-del {
+            color: var(--red);
+            background: rgba(239,68,68,.07);
+            border-color: rgba(239,68,68,.15);
+        }
+        .btn-del:hover {
+            background: rgba(239,68,68,.14);
+            color: var(--red);
         }
 
-        /* Breakdown */
+        /* ── Empty state ── */
+        .empty-state {
+            padding: 56px 24px;
+            text-align: center;
+            color: var(--ink-muted);
+            font-size: 14px;
+        }
+        .empty-icon { font-size: 40px; margin-bottom: 12px; display: block; }
+        .empty-state strong { color: var(--ink-soft); }
+
+        /* ── Category breakdown ── */
         .breakdown-row {
-            padding: 13px 20px;
-            border-bottom: 1px solid #f8fafc;
+            padding: 14px 22px;
+            border-bottom: 1px solid #f5f6ff;
         }
         .breakdown-row:last-child { border-bottom: none; }
-        .breakdown-label { font-size: 13px; font-weight: 500; color: var(--blue-900); }
-        .breakdown-amount { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--blue-900); }
-        .progress { height: 5px; border-radius: 3px; background: #f1f5f9; }
-        .progress-bar { border-radius: 3px; transition: width 1s cubic-bezier(.4,0,.2,1); }
-
-        .bar-0 { background: linear-gradient(90deg, #1d4ed8, #3b82f6); }
-        .bar-1 { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
-        .bar-2 { background: linear-gradient(90deg, #16a34a, #22c55e); }
-        .bar-3 { background: linear-gradient(90deg, #d97706, #f59e0b); }
-        .bar-4 { background: linear-gradient(90deg, #db2777, #f472b6); }
-
-        .dot-0 { background: #3b82f6; }
-        .dot-1 { background: #a78bfa; }
-        .dot-2 { background: #22c55e; }
-        .dot-3 { background: #f59e0b; }
-        .dot-4 { background: #f472b6; }
-
+        .breakdown-top {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-bottom: 9px;
+        }
+        .breakdown-label {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; font-weight: 600; color: var(--ink);
+        }
+        .breakdown-amount {
+            font-family: 'Sora', sans-serif;
+            font-size: 13px; font-weight: 700; color: var(--ink);
+        }
         .cat-dot {
-            width: 9px; height: 9px; border-radius: 50%;
-            display: inline-block; flex-shrink: 0;
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
         }
 
-        /* Empty */
-        .empty-state { padding: 48px 20px; text-align: center; color: #94a3b8; font-size: 14px; }
-        .empty-icon { font-size: 36px; margin-bottom: 10px; }
+        .progress-track {
+            height: 5px; border-radius: 3px;
+            background: #f0f1ff; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 3px;
+            transition: width 1.1s cubic-bezier(.4,0,.2,1);
+        }
 
-        /* Animations */
-        .fade-up { animation: fadeUp .4s ease both; }
-        .d1 { animation-delay: .07s; }
-        .d2 { animation-delay: .14s; }
-        .d3 { animation-delay: .21s; }
-        .d4 { animation-delay: .28s; }
+        .c0 { background: linear-gradient(90deg, #4f46e5, #818cf8); }
+        .c1 { background: linear-gradient(90deg, #7c3aed, #c084fc); }
+        .c2 { background: linear-gradient(90deg, #059669, #34d399); }
+        .c3 { background: linear-gradient(90deg, #d97706, #fbbf24); }
+        .c4 { background: linear-gradient(90deg, #db2777, #f472b6); }
+
+        .d0 { background: #818cf8; }
+        .d1 { background: #c084fc; }
+        .d2 { background: #34d399; }
+        .d3 { background: #fbbf24; }
+        .d4 { background: #f472b6; }
+
+        /* ── Animations ── */
+        .fade-up {
+            opacity: 0;
+            animation: fadeUp .5s ease forwards;
+        }
+        .a1 { animation-delay: .05s; }
+        .a2 { animation-delay: .10s; }
+        .a3 { animation-delay: .15s; }
+        .a4 { animation-delay: .20s; }
+        .a5 { animation-delay: .25s; }
+        .a6 { animation-delay: .30s; }
+
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(14px); }
+            from { opacity: 0; transform: translateY(16px); }
             to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Topbar -->
-    <header class="topbar d-flex align-items-center px-4">
-        <div class="d-flex align-items-center gap-2 me-auto">
-            <div class="brand-icon">💳</div>
-            <span class="brand-name">SpendWise</span>
+    <!-- ── Topbar ── -->
+    <header class="topbar">
+        <a href="/" class="brand">
+            <div class="brand-mark">💳</div>
+            <span class="brand-name">Spend<span>Wise</span></span>
+        </a>
+
+        <div class="nav-pill">
+            <div class="nav-avatar">{{ request.user.username|slice:":1"|upper }}</div>
+            <span class="nav-username">{{ request.user.username }}</span>
         </div>
-        <div class="d-flex align-items-center gap-3">
-            <div class="user-chip">
-                <div class="user-avatar">{{ request.user.username|slice:":1"|upper }}</div>
-                <span class="user-name">{{ request.user.username }}</span>
-            </div>
-            <a href="/users/logout/" class="btn-logout d-flex align-items-center gap-2">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-        </div>
+
+        <a href="/users/logout/" class="btn-logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
     </header>
 
-    <!-- Main content -->
-    <main class="container-xl py-4 px-3 px-md-4">
+    <!-- ── Main ── -->
+    <div class="page-shell">
 
         <!-- Page header -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 fade-up">
+        <div class="page-head fade-up a1">
             <div>
                 <div class="page-title">Dashboard</div>
-                <div class="text-muted" style="font-size:13px;">Your financial overview</div>
+                <div class="page-subtitle">Your financial overview at a glance</div>
             </div>
-            <a href="/add/" class="btn btn-primary btn-add text-white">
-                <i class="bi bi-plus-lg me-1"></i> Add Expense
+            <a href="/add/" class="btn-add">
+                <i class="bi bi-plus-lg"></i> Add Expense
             </a>
         </div>
 
         <!-- Stat cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-12 col-sm-4 fade-up">
-                <div class="card stat-card c-blue h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="text-uppercase text-muted fw-semibold" style="font-size:11px;letter-spacing:.5px;">Total Spending</span>
-                            <div class="stat-icon bg-primary bg-opacity-10">💸</div>
-                        </div>
-                        <div class="stat-value">₹{{ total_expense }}</div>
-                        <div class="text-muted mt-1" style="font-size:12px;">All time expenses</div>
-                    </div>
+        <div class="stat-grid">
+            <div class="stat-card blue fade-up a2">
+                <div class="stat-header">
+                    <span class="stat-label">Total Spending</span>
+                    <div class="stat-emoji-wrap">💸</div>
                 </div>
+                <div class="stat-value">₹{{ total_expense }}</div>
+                <div class="stat-meta">All time expenses</div>
             </div>
-            <div class="col-12 col-sm-4 fade-up d1">
-                <div class="card stat-card c-green h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="text-uppercase text-muted fw-semibold" style="font-size:11px;letter-spacing:.5px;">Transactions</span>
-                            <div class="stat-icon" style="background:rgba(34,197,94,.1);">📋</div>
-                        </div>
-                        <div class="stat-value">{{ expenses|length }}</div>
-                        <div class="text-muted mt-1" style="font-size:12px;">Recorded entries</div>
-                    </div>
+
+            <div class="stat-card green fade-up a3">
+                <div class="stat-header">
+                    <span class="stat-label">Transactions</span>
+                    <div class="stat-emoji-wrap">📋</div>
                 </div>
+                <div class="stat-value">{{ expenses|length }}</div>
+                <div class="stat-meta">Recorded entries</div>
             </div>
-            <div class="col-12 col-sm-4 fade-up d2">
-                <div class="card stat-card c-amber h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="text-uppercase text-muted fw-semibold" style="font-size:11px;letter-spacing:.5px;">Categories</span>
-                            <div class="stat-icon" style="background:rgba(245,158,11,.1);">🗂️</div>
-                        </div>
-                        <div class="stat-value">{{ category_summary|length }}</div>
-                        <div class="text-muted mt-1" style="font-size:12px;">Spending categories</div>
-                    </div>
+
+            <div class="stat-card amber fade-up a4">
+                <div class="stat-header">
+                    <span class="stat-label">Categories</span>
+                    <div class="stat-emoji-wrap">🗂️</div>
                 </div>
+                <div class="stat-value">{{ category_summary|length }}</div>
+                <div class="stat-meta">Spending categories</div>
             </div>
         </div>
 
-        <!-- Content row -->
-        <div class="row g-4">
+        <!-- Content panels -->
+        <div class="content-grid">
 
             <!-- Expense list -->
-            <div class="col-12 col-lg-7 fade-up d3">
-                <div class="card content-card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <span class="card-title-text">Recent Expenses</span>
-                        <span class="badge-count">{{ expenses|length }} entries</span>
-                    </div>
-                    <div class="card-body p-0">
-                        {% if expenses %}
-                            {% for expense in expenses %}
-                            <div class="expense-row">
-                                <div class="expense-icon">💳</div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <div class="expense-category text-truncate">{{ expense.category }}</div>
-                                    <div class="expense-date">{{ expense.date }}</div>
-                                </div>
-                                <div class="expense-amount">−₹{{ expense.amount }}</div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="empty-state">
-                                <div class="empty-icon">🧾</div>
-                                No expenses yet.<br>
-                                Click <strong>Add Expense</strong> to get started.
-                            </div>
-                        {% endif %}
-                    </div>
+            <div class="panel fade-up a5">
+                <div class="panel-head">
+                    <span class="panel-title">Recent Expenses</span>
+                    <span class="panel-badge">{{ expenses|length }} entries</span>
                 </div>
+
+                {% if expenses %}
+                    {% for expense in expenses %}
+                    <div class="expense-row">
+                        <div class="expense-icon-wrap">💳</div>
+                        <div class="expense-info">
+                            <div class="expense-cat">{{ expense.category }}</div>
+                            <div class="expense-date">{{ expense.date }}</div>
+                        </div>
+                        <div class="expense-right">
+                            <span class="expense-amount">−₹{{ expense.amount }}</span>
+                            <a href="{% url 'update_expense' expense.id %}" class="btn-icon btn-edit" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'delete_expense' expense.id %}" class="btn-icon btn-del" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <span class="empty-icon">🧾</span>
+                        No expenses recorded yet.<br>
+                        Click <strong>Add Expense</strong> to get started.
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Category breakdown -->
-            <div class="col-12 col-lg-5 fade-up d4">
-                <div class="card content-card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <span class="card-title-text">By Category</span>
-                        <span class="badge-count">{{ category_summary|length }}</span>
-                    </div>
-                    <div class="card-body p-0">
-                        {% if category_summary %}
-                            {% for item in category_summary %}
-                            <div class="breakdown-row" data-total="{{ item.total }}">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="breakdown-label d-flex align-items-center gap-2">
-                                        <span class="cat-dot dot-{{ forloop.counter0 }}"></span>
-                                        {{ item.category__name }}
-                                    </span>
-                                    <span class="breakdown-amount">₹{{ item.total }}</span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar bar-{{ forloop.counter0 }}" style="width:0%" role="progressbar"></div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="empty-state">
-                                <div class="empty-icon">📊</div>
-                                No category data yet.
-                            </div>
-                        {% endif %}
-                    </div>
+            <div class="panel fade-up a6">
+                <div class="panel-head">
+                    <span class="panel-title">By Category</span>
+                    <span class="panel-badge">{{ category_summary|length }}</span>
                 </div>
+
+                {% if category_summary %}
+                    {% for item in category_summary %}
+                    <div class="breakdown-row" data-total="{{ item.total }}">
+                        <div class="breakdown-top">
+                            <span class="breakdown-label">
+                                <span class="cat-dot d{{ forloop.counter0 }}"></span>
+                                {{ item.category__name }}
+                            </span>
+                            <span class="breakdown-amount">₹{{ item.total }}</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill c{{ forloop.counter0 }}" style="width:0%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <span class="empty-icon">📊</span>
+                        No category data yet.
+                    </div>
+                {% endif %}
             </div>
 
         </div>
-    </main>
+    </div><!-- /page-shell -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Animate progress bars on load
         const rows = document.querySelectorAll('.breakdown-row[data-total]');
         if (rows.length) {
-            const max = Math.max(...[...rows].map(r => parseFloat(r.dataset.total) || 0));
+            const totals = [...rows].map(r => parseFloat(r.dataset.total) || 0);
+            const max = Math.max(...totals);
             requestAnimationFrame(() => {
-                rows.forEach(row => {
-                    const pct = max > 0 ? (parseFloat(row.dataset.total) / max) * 100 : 0;
-                    row.querySelector('.progress-bar').style.width = pct + '%';
-                });
+                setTimeout(() => {
+                    rows.forEach(row => {
+                        const pct = max > 0 ? (parseFloat(row.dataset.total) / max) * 100 : 0;
+                        row.querySelector('.progress-fill').style.width = pct + '%';
+                    });
+                }, 300);
             });
         }
     </script>
-
 </body>
 </html>

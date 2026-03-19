@@ -18,6 +18,26 @@ def add_expense(request):
     
     return render(request, 'tracker/add_expense.html', {'form':form})
 
+@login_required
+def update_expense(request, id):
+    expense = Expense.objects.get(user=request.user, id = id)
+    if request.method == "POST":
+        form = ExpenseForm(request.POST, instance = expense)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = ExpenseForm(instance = expense)
+    
+    return render(request, 'tracker/add_expense.html', {"form":form})
+
+
+@login_required
+def delete_expense(request, id):
+    expense = Expense.objects.get(user = request.user, id = id)
+    expense.delete()
+    return redirect('/')
+
 
 @login_required
 def dashboard(request):
